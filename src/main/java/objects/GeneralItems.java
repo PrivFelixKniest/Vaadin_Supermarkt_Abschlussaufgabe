@@ -4,7 +4,7 @@ package objects;
 public class GeneralItems extends Product {
 
     // Constructor
-    public GeneralItems(String productDesignation, double purchasePrice, double sellingPrice, boolean ageRestriction) {
-        super(productDesignation, purchasePrice, sellingPrice, ageRestriction);
+    public GeneralItems(String productDesignation, double purchasePrice, double sellingPrice, boolean ageRestriction, boolean bioRestriction) {
+        super(productDesignation, purchasePrice, sellingPrice, ageRestriction, bioRestriction);
     }
 }

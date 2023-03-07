@@ -8,14 +8,16 @@ public abstract class Product {
     private double purchasePrice;
     private double sellingPrice;
     private boolean ageRestriction;
+    private boolean bioRestriction;
 
     // Super-Constructor
-    Product(String productDesignation, double purchasePrice, double sellingPrice, boolean fsk) {
+    Product(String productDesignation, double purchasePrice, double sellingPrice, boolean fsk, boolean bio) {
         this.PRODUCTID = Integer.toString((counter++));
         this.productDesignation = productDesignation;
         this.purchasePrice = purchasePrice;
         this.sellingPrice = sellingPrice;
         this.ageRestriction = fsk;
+        this.bioRestriction = bio;
     }
 
     // Get- & Set-Methods
@@ -58,5 +60,9 @@ public abstract class Product {
 
     public void setAgeRestriction(boolean ageRestriction) {
         this.ageRestriction = ageRestriction;
+    }
+    
+    public boolean getBioRestriction() {
+    	return bioRestriction;
     }
 }

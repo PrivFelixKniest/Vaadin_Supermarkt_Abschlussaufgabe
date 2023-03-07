@@ -3,26 +3,29 @@ package objects;
 import java.util.ArrayList;
 
 public class ShoppingCart {
+	public enum cartType {
+		Bio,
+		Employee,
+		Economy,
+		Age,
+		Gift,
+		None
+	}
+	
     private ArrayList<Product> myProducts;
-    private boolean bioFilter;
-    private boolean ageFilter;
-    private boolean employeesDiscount;
-    private boolean economyFilter;
+    private cartType cartType;
 
-    public ShoppingCart(boolean bioFilter, boolean ageFilter, boolean employeesDiscount, boolean economyFilter) {
+    public ShoppingCart(cartType cartType) {
         this.myProducts = new ArrayList<>();
-        this.bioFilter = bioFilter;
-        this.ageFilter = ageFilter;
-        this.employeesDiscount = employeesDiscount;
-        this.economyFilter = economyFilter;
+        this.cartType = cartType;
     }
 
     public void addProduct(Product p) {
         myProducts.add(p);
     }
 
-    public void removeProduct(Product p) {
-        myProducts.remove(p);
+    public void removeProductByIndex(int i) {
+        myProducts.remove(i);
     }
     
     public double getTotalPurchasePrice() {
@@ -42,8 +45,6 @@ public class ShoppingCart {
     }
 
     public ArrayList<Product> getMyProducts() { return myProducts; }
-    public boolean isAgeFilter() { return ageFilter; }
-    public boolean isBioFilter() { return bioFilter; }
-    public boolean isEmployeesDiscount() { return employeesDiscount; }
-    public boolean isEconomyFilter() { return economyFilter; }
+    
+    public cartType getCartType() { return cartType; }
 }

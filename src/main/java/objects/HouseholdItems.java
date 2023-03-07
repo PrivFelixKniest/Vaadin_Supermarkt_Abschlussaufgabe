@@ -5,8 +5,8 @@ public class HouseholdItems extends Product {
     private double recycleProportion;
 
     // Constructor
-    public HouseholdItems(String productDesignation, double purchasePrice, double sellingPrice, boolean ageRestriction, double recycleProportion) {
-        super(productDesignation, purchasePrice, sellingPrice, ageRestriction);
+    public HouseholdItems(String productDesignation, double purchasePrice, double sellingPrice, boolean ageRestriction, boolean bioRestriction, double recycleProportion) {
+        super(productDesignation, purchasePrice, sellingPrice, ageRestriction, bioRestriction);
         this.recycleProportion = recycleProportion;
     }
 
