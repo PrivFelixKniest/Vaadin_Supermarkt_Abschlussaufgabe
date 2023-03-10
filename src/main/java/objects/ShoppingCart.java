@@ -14,6 +14,7 @@ public class ShoppingCart {
 	
     private ArrayList<Product> myProducts;
     private cartType cartType;
+    private String name;
 
     public ShoppingCart(cartType cartType) {
         this.myProducts = new ArrayList<>();
@@ -47,4 +48,12 @@ public class ShoppingCart {
     public ArrayList<Product> getMyProducts() { return myProducts; }
     
     public cartType getCartType() { return cartType; }
+    
+    public void setName(String n) {
+    	name = n;
+    }
+    
+    public String getName() {
+    	return name;
+    }
 }

@@ -1,7 +1,7 @@
 package com.example.application.views;
 
 import com.example.application.views.main.MainView;
-import com.example.application.views.pages.NewPage;
+import com.example.application.views.pages.ShoppingCartView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.html.H1;
@@ -11,6 +11,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
+import com.example.application.views.pages.ProductView;
+
 
 public class MainLayout extends AppLayout { 
 
@@ -20,7 +22,7 @@ public class MainLayout extends AppLayout {
     }
 
     private void createHeader() {
-        H1 logo = new H1("Vaadin CRM");
+        H1 logo = new H1("GOOSEmart");
         logo.addClassNames("text-l", "m-m");
 
         HorizontalLayout header = new HorizontalLayout(
@@ -37,13 +39,13 @@ public class MainLayout extends AppLayout {
     }
     
     private void createDrawer() {
-        RouterLink mainLink = new RouterLink("Home", MainView.class); 
+        RouterLink mainLink = new RouterLink("Produkte", MainView.class); 
         mainLink.setHighlightCondition(HighlightConditions.sameLocation()); 
-        RouterLink newPageLink = new RouterLink("New Page", NewPage.class); 
-
+        RouterLink warenkorb = new RouterLink("Warenkorb", ShoppingCartView.class); 
+     
         addToDrawer(new VerticalLayout( 
             mainLink,
-            newPageLink
+            warenkorb
         ));
     }
 }
