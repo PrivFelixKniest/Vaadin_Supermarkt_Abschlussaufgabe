@@ -52,8 +52,8 @@ public class ControlUnit {
         return myWarehouse.getMyProducts(cartType.None);
     }
     
-    public void addShoppingCart(cartType cartType) {
-    	myShoppingCarts.add(new ShoppingCart(cartType));
+    public void addShoppingCart(ShoppingCart shoppingCart) {
+    	myShoppingCarts.add(shoppingCart);
     }
     
     public double getDaylyIncome() {

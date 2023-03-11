@@ -428,17 +428,17 @@ public class ShoppingCLI {
 				case "1":
 					// Economy
 					myState = State.ViewShoppingCarts;
-					cu.addShoppingCart(cartType.Economy);
+					cu.addShoppingCart(new ShoppingCart(cartType.Economy));
 					break;
 				case "2":
 					// Restricted
 					myState = State.ViewShoppingCarts;
-					cu.addShoppingCart(cartType.Age);
+					cu.addShoppingCart(new ShoppingCart(cartType.Age));
 					break;
 				case "3":
 					// Bio
 					myState = State.ViewShoppingCarts;
-					cu.addShoppingCart(cartType.Bio);
+					cu.addShoppingCart(new ShoppingCart(cartType.Bio));
 					break;
 				case "4":
 					// Employee
@@ -447,7 +447,7 @@ public class ShoppingCLI {
 				case "5":
 					// Gift 10
 					myState = State.ViewShoppingCarts;
-					cu.addShoppingCart(cartType.Gift);
+					cu.addShoppingCart(new ShoppingCart(cartType.Gift));
 					ArrayList<Product> products = new ArrayList<Product>(cu.getRandomProductList(10));
 					for (int i = 0; i < products.size(); i++) {
 						cu.myShoppingCarts.get(cu.myShoppingCarts.size()-1).addProduct(products.get(i));
@@ -456,7 +456,7 @@ public class ShoppingCLI {
 				case "6":
 					// Gift 20
 					myState = State.ViewShoppingCarts;
-					cu.addShoppingCart(cartType.Gift);
+					cu.addShoppingCart(new ShoppingCart(cartType.Gift));
 					ArrayList<Product> products1 = new ArrayList<Product>(cu.getRandomProductList(20));
 					for (int i = 0; i < products1.size(); i++) {
 						cu.myShoppingCarts.get(cu.myShoppingCarts.size()-1).addProduct(products1.get(i));
@@ -465,7 +465,7 @@ public class ShoppingCLI {
 				case "7":
 					// Gift 50
 					myState = State.ViewShoppingCarts;
-					cu.addShoppingCart(cartType.Gift);
+					cu.addShoppingCart(new ShoppingCart(cartType.Gift));
 					ArrayList<Product> products2 = new ArrayList<Product>(cu.getRandomProductList(50));
 					for (int i = 0; i < products2.size(); i++) {
 						cu.myShoppingCarts.get(cu.myShoppingCarts.size()-1).addProduct(products2.get(i));
@@ -532,7 +532,7 @@ public class ShoppingCLI {
 			}
 		} else if (myState == State.PasswordEmployees) {
 			if (cu.PasswordEmployeesShoppingCart(input)) {
-				cu.addShoppingCart(cartType.Employee);
+				cu.addShoppingCart(new ShoppingCart(cartType.Employee));
 				myState = State.ViewShoppingCarts;
 			}else {
 				myState = State.AddShoppingCart;

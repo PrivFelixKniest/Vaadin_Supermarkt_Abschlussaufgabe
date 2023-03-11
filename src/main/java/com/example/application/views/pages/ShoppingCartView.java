@@ -1,6 +1,7 @@
 package com.example.application.views.pages;
 
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -60,7 +61,7 @@ public class ShoppingCartView extends VerticalLayout {
     	ShoppingCart shoppingCart1 = new ShoppingCart(cartType.None);
     	shoppingCart1.setName("Warenkorb1");
     	currentShoppingCart = shoppingCart1;
-    	controlUnit.addShoppingCart(cartType.None);
+    	controlUnit.addShoppingCart(shoppingCart1);
     	shoppingcars.add(shoppingCart1);
     
 
@@ -166,7 +167,8 @@ public class ShoppingCartView extends VerticalLayout {
                 		
                 	}
                 	for(ShoppingCart s: shoppingcars) {
-                		if(s.getName().equals(currentTab.getLabel())) {
+						String[] splittedTab = currentTab.getLabel().split("-");
+                		if(s.getName().equals(splittedTab[0])) {
                 			scName.setText(currentTab.getLabel());
                 			currentShoppingCart = s;
                 			grid.getDataProvider().refreshAll(); 
@@ -193,7 +195,7 @@ public class ShoppingCartView extends VerticalLayout {
         			if(currentSelection =="Keine") {
         				ShoppingCart shoppingcartNew = new ShoppingCart(cartType.None);
         				shoppingcartNew.setName("Warenkorb"+counter);
-        				controlUnit.addShoppingCart(cartType.None);
+        				controlUnit.addShoppingCart(shoppingcartNew);
         				Tab shoppingcartTag = new Tab("Warenkorb"+counter);
         				tabs.add(shoppingcartTag);
         				//shoppingcars.add(shoppingcartNew);
@@ -201,8 +203,8 @@ public class ShoppingCartView extends VerticalLayout {
         			}
         			if(currentSelection == "Öko-Prinzip") {
             			ShoppingCart shoppingcartNew = new ShoppingCart(cartType.Bio);
-            			controlUnit.addShoppingCart(cartType.Bio);
-            			shoppingcartNew.setName("Warenkorb"+counter);
+						shoppingcartNew.setName("Warenkorb"+counter);
+            			controlUnit.addShoppingCart(shoppingcartNew);
             			Tab shoppingcartTag = new Tab("Warenkorb"+counter + "-Öko");
         				tabs.add(shoppingcartTag);
         				//shoppingcars.add(shoppingcartNew);
@@ -210,8 +212,8 @@ public class ShoppingCartView extends VerticalLayout {
             		}
         			if(currentSelection == "U18") {
             			ShoppingCart shoppingcartNew = new ShoppingCart(cartType.Age);
-            			controlUnit.addShoppingCart(cartType.Age);
-            			shoppingcartNew.setName("Warenkorb"+counter);
+						shoppingcartNew.setName("Warenkorb"+counter);
+            			controlUnit.addShoppingCart(shoppingcartNew);
             			Tab shoppingcartTag = new Tab("Warenkorb"+counter +"-U18");
         				tabs.add(shoppingcartTag);
         				//shoppingcars.add(shoppingcartNew);
@@ -219,8 +221,8 @@ public class ShoppingCartView extends VerticalLayout {
             		}
         			if(currentSelection == "Spar-Korb") {
             			ShoppingCart shoppingcartNew = new ShoppingCart(cartType.Economy);
-            			controlUnit.addShoppingCart(cartType.Economy);
             			shoppingcartNew.setName("Warenkorb"+counter);
+						controlUnit.addShoppingCart(shoppingcartNew);
             			Tab shoppingcartTag = new Tab("Warenkorb"+counter+ "-Spar");
         				tabs.add(shoppingcartTag);
         				//shoppingcars.add(shoppingcartNew);
@@ -228,8 +230,8 @@ public class ShoppingCartView extends VerticalLayout {
             		}
         			if(currentSelection == "Mitarbeiterkaufprogramm") {
             			ShoppingCart shoppingcartNew = new ShoppingCart(cartType.Employee);
-            			controlUnit.addShoppingCart(cartType.Employee);
             			shoppingcartNew.setName("Warenkorb"+counter);
+						controlUnit.addShoppingCart(shoppingcartNew);
             			Tab shoppingcartTag = new Tab("Warenkorb"+counter+ "-Mitarb.");
         				tabs.add(shoppingcartTag);
         				//shoppingcars.add(shoppingcartNew);
@@ -237,7 +239,7 @@ public class ShoppingCartView extends VerticalLayout {
         			if(currentSelection == "Geschenkoption 10€") {
         				ShoppingCart shoppingcartNew = new ShoppingCart(cartType.None);
         				shoppingcartNew.setName("Warenkorb"+counter);
-        				controlUnit.addShoppingCart(cartType.None);
+        				controlUnit.addShoppingCart(shoppingcartNew);
         				
         				Tab shoppingcartTag = new Tab("Warenkorb"+counter+ "-G10");
         				shoppingcartTag.setId("Warenkorb"+counter);
@@ -254,8 +256,8 @@ public class ShoppingCartView extends VerticalLayout {
             		}
         			if(currentSelection == "Geschenkoption 20€") {
         				ShoppingCart shoppingcartNew = new ShoppingCart(cartType.None);
-        				controlUnit.addShoppingCart(cartType.None);
         				shoppingcartNew.setName("Warenkorb"+counter);
+						controlUnit.addShoppingCart(shoppingcartNew);
         				Tab shoppingcartTag = new Tab("Warenkorb"+counter+ "-G20");
         				tabs.add(shoppingcartTag);
         				//shoppingcars.add(shoppingcartNew);
@@ -274,7 +276,7 @@ public class ShoppingCartView extends VerticalLayout {
         				Tab shoppingcartTag = new Tab("Warenkorb"+counter+ "-G50");
         				tabs.add(shoppingcartTag);
         				//shoppingcars.add(shoppingcartNew);
-        				controlUnit.addShoppingCart(cartType.None);
+        				controlUnit.addShoppingCart(shoppingcartNew);
         				ShoppingCart a = currentShoppingCart;
         				currentShoppingCart = shoppingcartNew;
         				ArrayList <Product> randomProducts = controlUnit.getRandomProductList(50);
