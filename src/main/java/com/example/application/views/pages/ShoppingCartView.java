@@ -51,13 +51,15 @@ public class ShoppingCartView extends VerticalLayout {
 	private Warehouse warehouse = new Warehouse();
 	private int counter = 2;
 	private String currentSelection = "";
+	private String currentSelectionCharc = "";
 	private ArrayList<ShoppingCart> shoppingcars = controlUnit.myShoppingCarts;
-	//ArrayList<Product> selectedItems;
-	//ArrayList<Product> list = new ArrayList<Product>();
 	private ShoppingCart shoppingCart1 = new ShoppingCart(cartType.None);
 	private Product selectedProduct = null;
 	private ArrayList<Product> allProductsInWarehouse = controlUnit.getProducts();
 	private Product addingProduct;
+	private Button buyButton;
+	private Span dailyRevenue = new Span();
+	private  Tabs tabs;
 
 	ArrayList<Product> prod;
 	
@@ -68,6 +70,11 @@ public class ShoppingCartView extends VerticalLayout {
     	currentShoppingCart = shoppingCart1;
     	controlUnit.addShoppingCart(shoppingCart1);
     	shoppingcars.add(shoppingCart1);
+    	
+    	Tab shoppingcart1 = new Tab("Warenkorb1");
+        shoppingcart1.setId("Warenkorb1");
+        
+        tabs = new Tabs(shoppingcart1);
  //Komponenten 
 
         
@@ -84,12 +91,13 @@ public class ShoppingCartView extends VerticalLayout {
             grid.setSelectionMode(Grid.SelectionMode.SINGLE);
             
             grid.addColumn(Product::getProductDesignation).setHeader("Produkt")
-            		.setWidth("10em").setFlexGrow(0);
+            		.setWidth("15em").setFlexGrow(0);
             grid.addColumn(Product::getProductId).setHeader("Produktnr")
             		.setWidth("37em").setFlexGrow(0).setKey("Produktnr");
             grid.addColumn(Product::isAgeRestriction).setHeader("Weitere Eigenschaften")
             		.setWidth("27em").setKey("Weitere Eigenschaften").setFlexGrow(0).setVisible(false);
-           // grid.addColumn(Product::getPurchasePrice).setHeader("Einkaufspreis");
+            grid.addColumn(Product::getPurchasePrice).setHeader("Einkaufspreis").setKey("Einkaufspreis")
+            		.setWidth("10em").setVisible(false);
             grid.addColumn(Product::getSellingPrice).setHeader("Preis")
             		.setWidth("6em").setFlexGrow(0);
             
@@ -105,7 +113,39 @@ public class ShoppingCartView extends VerticalLayout {
         Span scName = new Span(); 
         scName.setText(currentShoppingCart.getName());
         
+      //Kauf-Button
+        
+        Button buyButton = new Button("Bezahlen "+currentShoppingCart.getTotalSellingPrice(),
+                event -> {
+                	controlUnit.addToDaylyIncome(currentShoppingCart.getTotalPurchasePrice());
+                	shoppingcars.remove(currentShoppingCart);
+                	
+                	Tab toDeleteTab = tabs.getSelectedTab();
+                	tabs.remove(toDeleteTab);
+                	
+                	int i = 0;
+                	for(ShoppingCart s:controlUnit.myShoppingCarts) {
+                		if(i == 0) {
+                			currentShoppingCart = s;
+                			grid.getDataProvider().refreshAll();
+                    		prod = currentShoppingCart.getMyProducts();
+                            grid.setItems(prod);
+                		}
+                		
+                	}
+                	
+                	
+                    dailyRevenue.setText("Tageseinkommen: " + controlUnit.getDaylyIncome());
+                    
+                	
+                });
+        buyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        
     	//MenuBar Produkte einfügen + Pop Up
+        ConfirmDialog warnung = new ConfirmDialog();
+        warnung.setConfirmText("OK");
+		warnung.setHeader("Achtung!");
+        
 
         //Spar-Korb noch machen
     	MenuBar menuBar = new MenuBar();
@@ -123,6 +163,15 @@ public class ShoppingCartView extends VerticalLayout {
 	        			currentShoppingCart.addProduct(addingProduct);
 	        			prod = currentShoppingCart.getMyProducts();
 	                    grid.setItems(prod);
+	                    if(currentShoppingCart.getCartType() != cartType.Employee) {
+	                    	buyButton.setText("Bezahlen "+currentShoppingCart.getTotalSellingPrice());
+	                    }
+	                    else {buyButton.setText("Bezahlen "+currentShoppingCart.getTotalPurchasePrice());
+	                    }
+        			}
+        			else {
+        				warnung.setText("Sie können dieses Produkt nicht auswählen. Ihr Warenkorb unterstützt dieses Produkt nicht!");
+        				warnung.open();
         			}
         		});
         groceriesSubMenu.addItem("Toastbrot",
@@ -136,6 +185,15 @@ public class ShoppingCartView extends VerticalLayout {
     			currentShoppingCart.addProduct(addingProduct);
     			prod = currentShoppingCart.getMyProducts();
                 grid.setItems(prod);
+                if(currentShoppingCart.getCartType() != cartType.Employee) {
+                	buyButton.setText("Bezahlen "+currentShoppingCart.getTotalSellingPrice());
+                }
+                else {buyButton.setText("Bezahlen "+currentShoppingCart.getTotalPurchasePrice());
+                }
+			}
+			else {
+				warnung.setText("Sie können dieses Produkt nicht auswählen. Ihr Warenkorb unterstützt dieses Produkt nicht!");
+				warnung.open();
 			}
 		});
         groceriesSubMenu.addItem("Butter",
@@ -149,11 +207,20 @@ public class ShoppingCartView extends VerticalLayout {
             			currentShoppingCart.addProduct(addingProduct);
             			prod = currentShoppingCart.getMyProducts();
                         grid.setItems(prod);
+                        if(currentShoppingCart.getCartType() != cartType.Employee) {
+	                    	buyButton.setText("Bezahlen "+currentShoppingCart.getTotalSellingPrice());
+	                    }
+	                    else {buyButton.setText("Bezahlen "+currentShoppingCart.getTotalPurchasePrice());
+	                    }
+        			}
+        			else {
+        				warnung.setText("Sie können dieses Produkt nicht auswählen. Ihr Warenkorb unterstützt dieses Produkt nicht!");
+        				warnung.open();
         			}
         		});
         groceriesSubMenu.addItem("Wurst",
         		(ComponentEventListener<ClickEvent<MenuItem>>) event -> {
-        			if(currentShoppingCart.getCartType() != cartType.Gift ||currentShoppingCart.getCartType() != cartType.Bio) {
+        			if(currentShoppingCart.getCartType() != cartType.Gift &&currentShoppingCart.getCartType() != cartType.Bio) {
             			for(Product allP: allProductsInWarehouse) {
             				if(allP.getProductDesignation().equals("Wurst")) {
             					addingProduct = allP;
@@ -162,6 +229,15 @@ public class ShoppingCartView extends VerticalLayout {
             			currentShoppingCart.addProduct(addingProduct);
             			prod = currentShoppingCart.getMyProducts();
                         grid.setItems(prod);
+                        if(currentShoppingCart.getCartType() != cartType.Employee) {
+	                    	buyButton.setText("Bezahlen "+currentShoppingCart.getTotalSellingPrice());
+	                    }
+	                    else {buyButton.setText("Bezahlen "+currentShoppingCart.getTotalPurchasePrice());
+	                    }
+        			}
+        			else {
+        				warnung.setText("Sie können dieses Produkt nicht auswählen. Ihr Warenkorb unterstützt dieses Produkt nicht!");
+        				warnung.open();
         			}
         		});
         groceriesSubMenu.addItem("Käse",
@@ -175,11 +251,20 @@ public class ShoppingCartView extends VerticalLayout {
             			currentShoppingCart.addProduct(addingProduct);
             			prod = currentShoppingCart.getMyProducts();
                         grid.setItems(prod);
+                        if(currentShoppingCart.getCartType() != cartType.Employee) {
+	                    	buyButton.setText("Bezahlen "+currentShoppingCart.getTotalSellingPrice());
+	                    }
+	                    else {buyButton.setText("Bezahlen "+currentShoppingCart.getTotalPurchasePrice());
+	                    }
+        			}
+        			else {
+        				warnung.setText("Sie können dieses Produkt nicht auswählen. Ihr Warenkorb unterstützt dieses Produkt nicht!");
+        				warnung.open();
         			}
         		});
         groceriesSubMenu.addItem("Flasche Wein",
         		(ComponentEventListener<ClickEvent<MenuItem>>) event -> {
-        			if(currentShoppingCart.getCartType() != cartType.Gift ||currentShoppingCart.getCartType() != cartType.Age) {
+        			if(currentShoppingCart.getCartType() != cartType.Gift && currentShoppingCart.getCartType() != cartType.Age) {
             			for(Product allP: allProductsInWarehouse) {
             				if(allP.getProductDesignation().equals("Flasche Wein")) {
             					addingProduct = allP;
@@ -188,6 +273,15 @@ public class ShoppingCartView extends VerticalLayout {
             			currentShoppingCart.addProduct(addingProduct);
             			prod = currentShoppingCart.getMyProducts();
                         grid.setItems(prod);
+                        if(currentShoppingCart.getCartType() != cartType.Employee) {
+	                    	buyButton.setText("Bezahlen "+currentShoppingCart.getTotalSellingPrice());
+	                    }
+	                    else {buyButton.setText("Bezahlen "+currentShoppingCart.getTotalPurchasePrice());
+	                    }
+        			}
+        			else {
+        				warnung.setText("Sie können dieses Produkt nicht auswählen. Ihr Warenkorb unterstützt dieses Produkt nicht!");
+        				warnung.open();
         			}
         		});
         
@@ -196,7 +290,7 @@ public class ShoppingCartView extends VerticalLayout {
         SubMenu householdSubMenu = householdMenu.getSubMenu();
         householdSubMenu.addItem("Klobürste",
         		(ComponentEventListener<ClickEvent<MenuItem>>) event -> {
-        			if(currentShoppingCart.getCartType() != cartType.Gift ||currentShoppingCart.getCartType() != cartType.Age) {
+        			if(currentShoppingCart.getCartType() != cartType.Gift &&currentShoppingCart.getCartType() != cartType.Age) {
             			for(Product allP: allProductsInWarehouse) {
             				if(allP.getProductDesignation().equals("Klobürste")) {
             					addingProduct = allP;
@@ -205,11 +299,20 @@ public class ShoppingCartView extends VerticalLayout {
             			currentShoppingCart.addProduct(addingProduct);
             			prod = currentShoppingCart.getMyProducts();
                         grid.setItems(prod);
+                        if(currentShoppingCart.getCartType() != cartType.Employee) {
+	                    	buyButton.setText("Bezahlen "+currentShoppingCart.getTotalSellingPrice());
+	                    }
+	                    else {buyButton.setText("Bezahlen "+currentShoppingCart.getTotalPurchasePrice());
+	                    }
+        			}
+        			else {
+        				warnung.setText("Sie können dieses Produkt nicht auswählen. Ihr Warenkorb unterstützt dieses Produkt nicht!");
+        				warnung.open();
         			}
         		});
         householdSubMenu.addItem("Plastikbesteck",
         		(ComponentEventListener<ClickEvent<MenuItem>>) event -> {
-        			if(currentShoppingCart.getCartType() != cartType.Gift ||currentShoppingCart.getCartType() != cartType.Bio) {
+        			if(currentShoppingCart.getCartType() != cartType.Gift &&currentShoppingCart.getCartType() != cartType.Bio) {
             			for(Product allP: allProductsInWarehouse) {
             				if(allP.getProductDesignation().equals("Plastikbesteck")) {
             					addingProduct = allP;
@@ -218,6 +321,15 @@ public class ShoppingCartView extends VerticalLayout {
             			currentShoppingCart.addProduct(addingProduct);
             			prod = currentShoppingCart.getMyProducts();
                         grid.setItems(prod);
+                        if(currentShoppingCart.getCartType() != cartType.Employee) {
+	                    	buyButton.setText("Bezahlen "+currentShoppingCart.getTotalSellingPrice());
+	                    }
+	                    else {buyButton.setText("Bezahlen "+currentShoppingCart.getTotalPurchasePrice());
+	                    }
+        			}
+        			else {
+        				warnung.setText("Sie können dieses Produkt nicht auswählen. Ihr Warenkorb unterstützt dieses Produkt nicht!");
+        				warnung.open();
         			}
         		});
         householdSubMenu.addItem("Putzlappen",
@@ -231,7 +343,16 @@ public class ShoppingCartView extends VerticalLayout {
 		    			currentShoppingCart.addProduct(addingProduct);
 		    			prod = currentShoppingCart.getMyProducts();
 		                grid.setItems(prod);
+		                if(currentShoppingCart.getCartType() != cartType.Employee) {
+	                    	buyButton.setText("Bezahlen "+currentShoppingCart.getTotalSellingPrice());
+	                    }
+	                    else {buyButton.setText("Bezahlen "+currentShoppingCart.getTotalPurchasePrice());
+	                    }
 					}
+					else {
+        				warnung.setText("Sie können dieses Produkt nicht auswählen. Ihr Warenkorb unterstützt dieses Produkt nicht!");
+        				warnung.open();
+        			}
 				});
         householdSubMenu.addItem("Zahncreme",
         		(ComponentEventListener<ClickEvent<MenuItem>>) event -> {
@@ -244,6 +365,15 @@ public class ShoppingCartView extends VerticalLayout {
             			currentShoppingCart.addProduct(addingProduct);
             			prod = currentShoppingCart.getMyProducts();
                         grid.setItems(prod);
+                        if(currentShoppingCart.getCartType() != cartType.Employee) {
+	                    	buyButton.setText("Bezahlen "+currentShoppingCart.getTotalSellingPrice());
+	                    }
+	                    else {buyButton.setText("Bezahlen "+currentShoppingCart.getTotalPurchasePrice());
+	                    }
+        			}
+        			else {
+        				warnung.setText("Sie können dieses Produkt nicht auswählen. Ihr Warenkorb unterstützt dieses Produkt nicht!");
+        				warnung.open();
         			}
         		});
 
@@ -251,7 +381,7 @@ public class ShoppingCartView extends VerticalLayout {
         SubMenu generalSubMenu = generalMenu.getSubMenu();
         generalSubMenu.addItem("DVD Actionfilm",
 		        (ComponentEventListener<ClickEvent<MenuItem>>) event -> {
-					if(currentShoppingCart.getCartType() != cartType.Gift || currentShoppingCart.getCartType() != cartType.Age) {
+					if(currentShoppingCart.getCartType() != cartType.Gift && currentShoppingCart.getCartType() != cartType.Age) {
 		    			for(Product allP: allProductsInWarehouse) {
 		    				if(allP.getProductDesignation().equals("DVD Actionfilm")) {
 		    					addingProduct = allP;
@@ -260,7 +390,16 @@ public class ShoppingCartView extends VerticalLayout {
 		    			currentShoppingCart.addProduct(addingProduct);
 		    			prod = currentShoppingCart.getMyProducts();
 		                grid.setItems(prod);
+		                if(currentShoppingCart.getCartType() != cartType.Employee) {
+	                    	buyButton.setText("Bezahlen "+currentShoppingCart.getTotalSellingPrice());
+	                    }
+	                    else {buyButton.setText("Bezahlen "+currentShoppingCart.getTotalPurchasePrice());
+	                    }
 					}
+					else {
+        				warnung.setText("Sie können dieses Produkt nicht auswählen. Ihr Warenkorb unterstützt dieses Produkt nicht!");
+        				warnung.open();
+        			}
 				});
         generalSubMenu.addItem("DVD Familienfilm",
         		(ComponentEventListener<ClickEvent<MenuItem>>) event -> {
@@ -273,7 +412,16 @@ public class ShoppingCartView extends VerticalLayout {
 		    			currentShoppingCart.addProduct(addingProduct);
 		    			prod = currentShoppingCart.getMyProducts();
 		                grid.setItems(prod);
+		                if(currentShoppingCart.getCartType() != cartType.Employee) {
+	                    	buyButton.setText("Bezahlen "+currentShoppingCart.getTotalSellingPrice());
+	                    }
+	                    else {buyButton.setText("Bezahlen "+currentShoppingCart.getTotalPurchasePrice());
+	                    }
 					}
+					else {
+        				warnung.setText("Sie können dieses Produkt nicht auswählen. Ihr Warenkorb unterstützt dieses Produkt nicht!");
+        				warnung.open();
+        			}
 				});
 
         add(menuBar);
@@ -297,10 +445,7 @@ public class ShoppingCartView extends VerticalLayout {
         //Warenkörbe-Auswahl
     	
         
-        Tab shoppingcart1 = new Tab("Warenkorb1");
-        shoppingcart1.setId("Warenkorb1");
         
-        Tabs tabs = new Tabs(shoppingcart1);
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
         tabs.setHeight("240px");
         tabs.setWidth("240px");
@@ -315,6 +460,12 @@ public class ShoppingCartView extends VerticalLayout {
                 		grid.getDataProvider().refreshAll();
                 		prod = currentShoppingCart.getMyProducts();
                         grid.setItems(prod);
+                        
+                        if(currentShoppingCart.getCartType() != cartType.Employee) {
+	                    	buyButton.setText("Bezahlen "+currentShoppingCart.getTotalSellingPrice());
+	                    }
+	                    else {buyButton.setText("Bezahlen "+currentShoppingCart.getTotalPurchasePrice());
+	                    }
                 		
                 	}
                 	for(ShoppingCart s: shoppingcars) {
@@ -327,10 +478,19 @@ public class ShoppingCartView extends VerticalLayout {
                 			grid.setItems(prod);
                             scName.setText(currentTab.getLabel()); 
                             
-                            
-                            
+                            if(currentShoppingCart.getCartType() != cartType.Employee) {
+    	                    	buyButton.setText("Bezahlen "+currentShoppingCart.getTotalSellingPrice());
+    	                    }
+    	                    else {buyButton.setText("Bezahlen "+currentShoppingCart.getTotalPurchasePrice());
+    	                    }
+   
                 		}
                 	}
+                	if(currentShoppingCart.getCartType()== cartType.Employee) {
+                        grid.getColumnByKey("Einkaufspreis").setVisible(true);
+                        grid.getColumnByKey("Produktnr").setWidth("10em"); 
+                        grid.getColumnByKey("Weitere Eigenschaften").setWidth("17em"); 
+                    }
                 }
             );
         
@@ -435,17 +595,11 @@ public class ShoppingCartView extends VerticalLayout {
         		});
         
         newShoppingCart.setWidth("12em");
-        
-    	
-    	
-         
+
         
         //Sortieren nach "Weiteren Eigenschaften"
         
         ConfirmDialog dialogProduct = new ConfirmDialog();
-        dialogProduct.setHeader("überschrift");
-        dialogProduct.setText("hbk");
-
         dialogProduct.setConfirmText("OK");
         
 
@@ -456,13 +610,36 @@ public class ShoppingCartView extends VerticalLayout {
                     "FSK 18", "FSK frei");
             
             //Pop-Up zur Sortierung     //Funktioniert noch nicht
-                select.getElement().addEventListener("längstes Mindesthaltbarkeitsdatum", 
-                	    event -> dialogProduct.open());
-                	
+ //               select.getElement().addEventListener("click", event ->{
+//                	if(select.getIte) {
+//                		
+//                	}
+//                	dialogProduct.open();});
                 
+                select.addValueChangeListener(event -> {
+                    currentSelectionCharc= event.getValue();
+                    String prodText = "";
+                    if(currentSelectionCharc.equals("längstes Mindesthaltbarkeitsdatum")) {
+                    	
+                    	int i = controlUnit.getHighestSpecialBestByDateIndex(currentShoppingCart);
+                    	int index = 0;
+                    	
+                    			for(Product p:currentShoppingCart.getMyProducts()) {
+                    				if(index ==i) {
+                    					prodText = p.getProductDesignation();
+                    					break;
+                    				}
+                    				index++;
+                    			}
+                    	
+                    	dialogProduct.setHeader("Längstes Mindesthaltbarkeitsdatum");
+                        dialogProduct.setText(prodText);
+                    	dialogProduct.open();
+                    }
+                });
 
-            
        
+     
             
             
             //Weitere Eigenschaften einsehen - Button
@@ -488,38 +665,15 @@ public class ShoppingCartView extends VerticalLayout {
                     	//Eventuell Pop Up, dass man nichts öndern kann beim Geschenk
                     	if(currentShoppingCart.getCartType()!=cartType.Gift) {
 	                    currentShoppingCart.removeProductByObject(selectedProduct);
-	                    //grid.getDataProvider().refreshAll(); 
 	      	         	ArrayList<Product>refreshProd = currentShoppingCart.getMyProducts();
 	      	         	grid.setItems(refreshProd);
                     	}
                     });
                     
-                    
-            //Kauf-Button
-            
-            Button buyButton = new Button("Bezahlen "+currentShoppingCart.getTotalSellingPrice(),
-                    event -> {
-                    	controlUnit.addToDaylyIncome(currentShoppingCart.getTotalPurchasePrice());
-                    	shoppingcars.remove(currentShoppingCart);
-                    	currentShoppingCart = null;
-                    	
-                    	grid.getDataProvider().refreshAll();
-                		prod = currentShoppingCart.getMyProducts();
-                        grid.setItems(prod);
-                    	
-                    	//Tab entfernen
-                    	
-                    });
-            buyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            
-            
-            
             //Tageneinnahme-Anzeige 
+            dailyRevenue.setText("Tageseinkommen: " + controlUnit.getDaylyIncome());        
             
-            Span dailyRevenue = new Span(); 
-            dailyRevenue.setText("Tageseinkommen: " + controlUnit.getDaylyIncome());
-            
-            
+
             //Layout 
             
             
@@ -547,17 +701,8 @@ public class ShoppingCartView extends VerticalLayout {
             
             dailyRevenue.getStyle().set("margin-left", "auto");
             add(dailyRevenue);
-
-           // add(layoutShoppingCart11); TEST
-            String a = "";
-            for(Product p:currentShoppingCart.getMyProducts()) {
-            	a = a + p.getProductId();
-            }
-            Span test = new Span(); 
-            test.setText(a);
-            add(test);
-            
-            
     }
+    
+    
 
 }
