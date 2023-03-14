@@ -19,8 +19,9 @@ public class ShoppingCart {
     //noch nicht in der Ausarbeitung --> Für die Oberfläche eine weitere Entfernmöglichkeit
     public void removeProductByObject(Product p) {
     	for(Product prod: myProducts) {
-    		if(prod ==p) {
+    		if(prod==p) {
     			myProducts.remove(p);
+                break;
     		}
     	}
     }

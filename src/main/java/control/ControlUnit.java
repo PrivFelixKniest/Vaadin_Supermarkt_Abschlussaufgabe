@@ -59,6 +59,13 @@ public class ControlUnit {
     public void addShoppingCart(ShoppingCart shoppingCart) {
     	myShoppingCarts.add(shoppingCart);
     }
+	public void removeShoppingCart(ShoppingCart shoppingCart) {
+		for(ShoppingCart s : myShoppingCarts){
+			if (s.getName().equals(shoppingCart.getName())) {
+				myShoppingCarts.remove(s);
+			}
+		}
+	}
     
     public double getDaylyIncome() {
     	return daylyIncome;
