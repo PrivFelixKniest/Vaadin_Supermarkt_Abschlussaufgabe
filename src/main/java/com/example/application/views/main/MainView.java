@@ -43,7 +43,7 @@ import java.util.stream.Stream;
 public class MainView extends VerticalLayout{
     
 	private ShoppingCart currentShoppingCart;
-    private ControlUnit controlUnit = new ControlUnit();
+    private ControlUnit controlUnit = ControlUnit.getInstance();
     ArrayList<ShoppingCart> shoppingcars = controlUnit.myShoppingCarts;
     
     public ControlUnit getControlUnit() {

@@ -31,12 +31,14 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 
-//import logo from '/src/main/resources/META-INF/resources/images/Goosemart.png';
 
 
 
@@ -45,54 +47,29 @@ import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 public class ShoppingCartView extends VerticalLayout {
 
 	private ShoppingCart currentShoppingCart;
-	private MainView mv = new MainView();
-	private ControlUnit controlUnit = mv.getControlUnit();
+	private ControlUnit controlUnit = ControlUnit.getInstance();
 	private Warehouse warehouse = new Warehouse();
 	private int counter = 2;
-	String currentSelection = "";
-	Grid<Product> grid = new Grid<>(Product.class, false);
-	ArrayList<ShoppingCart> shoppingcars = controlUnit.myShoppingCarts;
-	ArrayList<Product> selectedItems;
+	private String currentSelection = "";
+	private ArrayList<ShoppingCart> shoppingcars = controlUnit.myShoppingCarts;
+	//ArrayList<Product> selectedItems;
+	//ArrayList<Product> list = new ArrayList<Product>();
+	private ShoppingCart shoppingCart1 = new ShoppingCart(cartType.None);
+	private Product selectedProduct = null;
+	private ArrayList<Product> allProductsInWarehouse = controlUnit.getProducts();
+	private Product addingProduct;
+
+	ArrayList<Product> prod;
 	
 	
     public ShoppingCartView() {
     	
-    	ArrayList<Product> list = new ArrayList<Product>();
-    	ShoppingCart shoppingCart1 = new ShoppingCart(cartType.None);
     	shoppingCart1.setName("Warenkorb1");
     	currentShoppingCart = shoppingCart1;
     	controlUnit.addShoppingCart(shoppingCart1);
     	shoppingcars.add(shoppingCart1);
-    
+ //Komponenten 
 
-    	
-   //Komponenten 
-    	//MenuBar
-
-    	MenuBar menuBar = new MenuBar();
-
-        MenuItem groceriesMenu = menuBar.addItem("Lebensmittel");
-        SubMenu groceriesSubMenu = groceriesMenu.getSubMenu();
-        groceriesSubMenu.addItem("Mineralwasser");
-        groceriesSubMenu.addItem("Toastbrot");
-        groceriesSubMenu.addItem("Butter");
-        groceriesSubMenu.addItem("Wurst");
-        groceriesSubMenu.addItem("Käse");
-        groceriesSubMenu.addItem("Flasche Wein");
-
-        MenuItem householdMenu = menuBar.addItem("Haushaltsartikel");
-        SubMenu householdSubMenu = householdMenu.getSubMenu();
-        householdSubMenu.addItem("Klobürste");
-        householdSubMenu.addItem("Plastikbesteck");
-        householdSubMenu.addItem("Putzlappen");
-        householdSubMenu.addItem("Zahncreme");
-
-        MenuItem generalMenu = menuBar.addItem("Sonstige");
-        SubMenu generalSubMenu = generalMenu.getSubMenu();
-        generalSubMenu.addItem("DVD Actionfilm");
-        generalSubMenu.addItem("DVD Familienfilm");
-
-        add(menuBar);
         
         //Logo
         
@@ -103,8 +80,8 @@ public class ShoppingCartView extends VerticalLayout {
         
         // Produkte im Warenkorb (Tabelle)   
             
-            
-            grid.setSelectionMode(Grid.SelectionMode.MULTI);
+        	Grid<Product> grid = new Grid<>(Product.class, false);
+            grid.setSelectionMode(Grid.SelectionMode.SINGLE);
             
             grid.addColumn(Product::getProductDesignation).setHeader("Produkt")
             		.setWidth("10em").setFlexGrow(0);
@@ -127,8 +104,182 @@ public class ShoppingCartView extends VerticalLayout {
            
         Span scName = new Span(); 
         scName.setText(currentShoppingCart.getName());
+        
+    	//MenuBar Produkte einfügen + Pop Up
+
+        //Spar-Korb noch machen
+    	MenuBar menuBar = new MenuBar();
+
+        MenuItem groceriesMenu = menuBar.addItem("Lebensmittel");
+        SubMenu groceriesSubMenu = groceriesMenu.getSubMenu();
+        groceriesSubMenu.addItem("Mineralwasser", 
+        		(ComponentEventListener<ClickEvent<MenuItem>>) event -> {
+        			if(currentShoppingCart.getCartType() != cartType.Gift) {
+	        			for(Product allP: allProductsInWarehouse) {
+	        				if(allP.getProductDesignation().equals("Mineralwasser")) {
+	        					addingProduct = allP;
+	        				}
+	        			}
+	        			currentShoppingCart.addProduct(addingProduct);
+	        			prod = currentShoppingCart.getMyProducts();
+	                    grid.setItems(prod);
+        			}
+        		});
+        groceriesSubMenu.addItem("Toastbrot",
+        (ComponentEventListener<ClickEvent<MenuItem>>) event -> {
+			if(currentShoppingCart.getCartType() != cartType.Gift) {
+    			for(Product allP: allProductsInWarehouse) {
+    				if(allP.getProductDesignation().equals("Toastbrot")) {
+    					addingProduct = allP;
+    				}
+    			}
+    			currentShoppingCart.addProduct(addingProduct);
+    			prod = currentShoppingCart.getMyProducts();
+                grid.setItems(prod);
+			}
+		});
+        groceriesSubMenu.addItem("Butter",
+        		(ComponentEventListener<ClickEvent<MenuItem>>) event -> {
+        			if(currentShoppingCart.getCartType() != cartType.Gift) {
+            			for(Product allP: allProductsInWarehouse) {
+            				if(allP.getProductDesignation().equals("Butter")) {
+            					addingProduct = allP;
+            				}
+            			}
+            			currentShoppingCart.addProduct(addingProduct);
+            			prod = currentShoppingCart.getMyProducts();
+                        grid.setItems(prod);
+        			}
+        		});
+        groceriesSubMenu.addItem("Wurst",
+        		(ComponentEventListener<ClickEvent<MenuItem>>) event -> {
+        			if(currentShoppingCart.getCartType() != cartType.Gift ||currentShoppingCart.getCartType() != cartType.Bio) {
+            			for(Product allP: allProductsInWarehouse) {
+            				if(allP.getProductDesignation().equals("Wurst")) {
+            					addingProduct = allP;
+            				}
+            			}
+            			currentShoppingCart.addProduct(addingProduct);
+            			prod = currentShoppingCart.getMyProducts();
+                        grid.setItems(prod);
+        			}
+        		});
+        groceriesSubMenu.addItem("Käse",
+        		(ComponentEventListener<ClickEvent<MenuItem>>) event -> {
+        			if(currentShoppingCart.getCartType() != cartType.Gift) {
+            			for(Product allP: allProductsInWarehouse) {
+            				if(allP.getProductDesignation().equals("Käse")) {
+            					addingProduct = allP;
+            				}
+            			}
+            			currentShoppingCart.addProduct(addingProduct);
+            			prod = currentShoppingCart.getMyProducts();
+                        grid.setItems(prod);
+        			}
+        		});
+        groceriesSubMenu.addItem("Flasche Wein",
+        		(ComponentEventListener<ClickEvent<MenuItem>>) event -> {
+        			if(currentShoppingCart.getCartType() != cartType.Gift ||currentShoppingCart.getCartType() != cartType.Age) {
+            			for(Product allP: allProductsInWarehouse) {
+            				if(allP.getProductDesignation().equals("Flasche Wein")) {
+            					addingProduct = allP;
+            				}
+            			}
+            			currentShoppingCart.addProduct(addingProduct);
+            			prod = currentShoppingCart.getMyProducts();
+                        grid.setItems(prod);
+        			}
+        		});
+        
+
+        MenuItem householdMenu = menuBar.addItem("Haushaltsartikel");
+        SubMenu householdSubMenu = householdMenu.getSubMenu();
+        householdSubMenu.addItem("Klobürste",
+        		(ComponentEventListener<ClickEvent<MenuItem>>) event -> {
+        			if(currentShoppingCart.getCartType() != cartType.Gift ||currentShoppingCart.getCartType() != cartType.Age) {
+            			for(Product allP: allProductsInWarehouse) {
+            				if(allP.getProductDesignation().equals("Klobürste")) {
+            					addingProduct = allP;
+            				}
+            			}
+            			currentShoppingCart.addProduct(addingProduct);
+            			prod = currentShoppingCart.getMyProducts();
+                        grid.setItems(prod);
+        			}
+        		});
+        householdSubMenu.addItem("Plastikbesteck",
+        		(ComponentEventListener<ClickEvent<MenuItem>>) event -> {
+        			if(currentShoppingCart.getCartType() != cartType.Gift ||currentShoppingCart.getCartType() != cartType.Bio) {
+            			for(Product allP: allProductsInWarehouse) {
+            				if(allP.getProductDesignation().equals("Plastikbesteck")) {
+            					addingProduct = allP;
+            				}
+            			}
+            			currentShoppingCart.addProduct(addingProduct);
+            			prod = currentShoppingCart.getMyProducts();
+                        grid.setItems(prod);
+        			}
+        		});
+        householdSubMenu.addItem("Putzlappen",
+		        (ComponentEventListener<ClickEvent<MenuItem>>) event -> {
+					if(currentShoppingCart.getCartType() != cartType.Gift) {
+		    			for(Product allP: allProductsInWarehouse) {
+		    				if(allP.getProductDesignation().equals("Putzlappen")) {
+		    					addingProduct = allP;
+		    				}
+		    			}
+		    			currentShoppingCart.addProduct(addingProduct);
+		    			prod = currentShoppingCart.getMyProducts();
+		                grid.setItems(prod);
+					}
+				});
+        householdSubMenu.addItem("Zahncreme",
+        		(ComponentEventListener<ClickEvent<MenuItem>>) event -> {
+        			if(currentShoppingCart.getCartType() != cartType.Gift) {
+            			for(Product allP: allProductsInWarehouse) {
+            				if(allP.getProductDesignation().equals("Zahncreme")) {
+            					addingProduct = allP;
+            				}
+            			}
+            			currentShoppingCart.addProduct(addingProduct);
+            			prod = currentShoppingCart.getMyProducts();
+                        grid.setItems(prod);
+        			}
+        		});
+
+        MenuItem generalMenu = menuBar.addItem("Sonstige");
+        SubMenu generalSubMenu = generalMenu.getSubMenu();
+        generalSubMenu.addItem("DVD Actionfilm",
+		        (ComponentEventListener<ClickEvent<MenuItem>>) event -> {
+					if(currentShoppingCart.getCartType() != cartType.Gift || currentShoppingCart.getCartType() != cartType.Age) {
+		    			for(Product allP: allProductsInWarehouse) {
+		    				if(allP.getProductDesignation().equals("DVD Actionfilm")) {
+		    					addingProduct = allP;
+		    				}
+		    			}
+		    			currentShoppingCart.addProduct(addingProduct);
+		    			prod = currentShoppingCart.getMyProducts();
+		                grid.setItems(prod);
+					}
+				});
+        generalSubMenu.addItem("DVD Familienfilm",
+        		(ComponentEventListener<ClickEvent<MenuItem>>) event -> {
+					if(currentShoppingCart.getCartType() != cartType.Gift) {
+		    			for(Product allP: allProductsInWarehouse) {
+		    				if(allP.getProductDesignation().equals("DVD Familienfilm")) {
+		    					addingProduct = allP;
+		    				}
+		    			}
+		    			currentShoppingCart.addProduct(addingProduct);
+		    			prod = currentShoppingCart.getMyProducts();
+		                grid.setItems(prod);
+					}
+				});
+
+        add(menuBar);
  
  //Alles zu Warenkörben
+        
         
         //Warenkorb Filter + Geschenkoption zusammengefügt
         
@@ -162,8 +313,8 @@ public class ShoppingCartView extends VerticalLayout {
                 	if(currentTab == shoppingcart1) {
                 		currentShoppingCart = shoppingCart1;
                 		grid.getDataProvider().refreshAll();
-                		 //ArrayList<Product> prod = currentShoppingCart.getMyProducts();
-                         //grid.setItems(prod);
+                		prod = currentShoppingCart.getMyProducts();
+                        grid.setItems(prod);
                 		
                 	}
                 	for(ShoppingCart s: shoppingcars) {
@@ -172,11 +323,10 @@ public class ShoppingCartView extends VerticalLayout {
                 			scName.setText(currentTab.getLabel());
                 			currentShoppingCart = s;
                 			grid.getDataProvider().refreshAll(); 
-                			ArrayList<Product> prod = currentShoppingCart.getMyProducts();
-                            grid.setItems(prod);
-                            scName.setText(currentTab.getLabel());
+                			prod = currentShoppingCart.getMyProducts();
+                			grid.setItems(prod);
+                            scName.setText(currentTab.getLabel()); 
                             
-                           
                             
                             
                 		}
@@ -216,7 +366,6 @@ public class ShoppingCartView extends VerticalLayout {
             			controlUnit.addShoppingCart(shoppingcartNew);
             			Tab shoppingcartTag = new Tab("Warenkorb"+counter +"-U18");
         				tabs.add(shoppingcartTag);
-        				//shoppingcars.add(shoppingcartNew);
         				counter++;
             		}
         			if(currentSelection == "Spar-Korb") {
@@ -225,7 +374,6 @@ public class ShoppingCartView extends VerticalLayout {
 						controlUnit.addShoppingCart(shoppingcartNew);
             			Tab shoppingcartTag = new Tab("Warenkorb"+counter+ "-Spar");
         				tabs.add(shoppingcartTag);
-        				//shoppingcars.add(shoppingcartNew);
         				counter++;
             		}
         			if(currentSelection == "Mitarbeiterkaufprogramm") {
@@ -234,17 +382,16 @@ public class ShoppingCartView extends VerticalLayout {
 						controlUnit.addShoppingCart(shoppingcartNew);
             			Tab shoppingcartTag = new Tab("Warenkorb"+counter+ "-Mitarb.");
         				tabs.add(shoppingcartTag);
-        				//shoppingcars.add(shoppingcartNew);
+        				counter++;
             		}
         			if(currentSelection == "Geschenkoption 10€") {
-        				ShoppingCart shoppingcartNew = new ShoppingCart(cartType.None);
+        				ShoppingCart shoppingcartNew = new ShoppingCart(cartType.Gift);
         				shoppingcartNew.setName("Warenkorb"+counter);
         				controlUnit.addShoppingCart(shoppingcartNew);
         				
         				Tab shoppingcartTag = new Tab("Warenkorb"+counter+ "-G10");
         				shoppingcartTag.setId("Warenkorb"+counter);
         				tabs.add(shoppingcartTag);
-        				//shoppingcars.add(shoppingcartNew);
         				ShoppingCart a = currentShoppingCart;
         				currentShoppingCart = shoppingcartNew;
         				ArrayList <Product> randomProducts = controlUnit.getRandomProductList(10);
@@ -255,12 +402,11 @@ public class ShoppingCartView extends VerticalLayout {
         				counter++;
             		}
         			if(currentSelection == "Geschenkoption 20€") {
-        				ShoppingCart shoppingcartNew = new ShoppingCart(cartType.None);
+        				ShoppingCart shoppingcartNew = new ShoppingCart(cartType.Gift);
         				shoppingcartNew.setName("Warenkorb"+counter);
 						controlUnit.addShoppingCart(shoppingcartNew);
         				Tab shoppingcartTag = new Tab("Warenkorb"+counter+ "-G20");
         				tabs.add(shoppingcartTag);
-        				//shoppingcars.add(shoppingcartNew);
         				ShoppingCart a = currentShoppingCart;
         				currentShoppingCart = shoppingcartNew;
         				ArrayList <Product> randomProducts = controlUnit.getRandomProductList(20);
@@ -271,11 +417,10 @@ public class ShoppingCartView extends VerticalLayout {
         				counter++;
             		}
         			if(currentSelection == "Geschenkoption 50€") {
-        				ShoppingCart shoppingcartNew = new ShoppingCart(cartType.None);
+        				ShoppingCart shoppingcartNew = new ShoppingCart(cartType.Gift);
         				shoppingcartNew.setName("Warenkorb"+counter);
         				Tab shoppingcartTag = new Tab("Warenkorb"+counter+ "-G50");
         				tabs.add(shoppingcartTag);
-        				//shoppingcars.add(shoppingcartNew);
         				controlUnit.addShoppingCart(shoppingcartNew);
         				ShoppingCart a = currentShoppingCart;
         				currentShoppingCart = shoppingcartNew;
@@ -331,15 +476,21 @@ public class ShoppingCartView extends VerticalLayout {
             
            //Produkt aus Warenkorb entfernen 
             
-            grid.addSelectionListener(event -> {
-         	   Set<Product> selected = event.getAllSelectedItems();
-         	   selectedItems = (ArrayList<Product>) selected;
+            
+            grid.addItemClickListener(event -> {
+	         	   selectedProduct = event.getItem();
+	         	  
             });
             
             Button deleteButton = new Button("Auswahl entfernen",
                     event -> {
-                    	for(int i = 0; i<selectedItems.size();i++) {
-                    		currentShoppingCart.removeProductByIndex(i);
+                    	
+                    	//Eventuell Pop Up, dass man nichts öndern kann beim Geschenk
+                    	if(currentShoppingCart.getCartType()!=cartType.Gift) {
+	                    currentShoppingCart.removeProductByObject(selectedProduct);
+	                    //grid.getDataProvider().refreshAll(); 
+	      	         	ArrayList<Product>refreshProd = currentShoppingCart.getMyProducts();
+	      	         	grid.setItems(refreshProd);
                     	}
                     });
                     
@@ -351,6 +502,11 @@ public class ShoppingCartView extends VerticalLayout {
                     	controlUnit.addToDaylyIncome(currentShoppingCart.getTotalPurchasePrice());
                     	shoppingcars.remove(currentShoppingCart);
                     	currentShoppingCart = null;
+                    	
+                    	grid.getDataProvider().refreshAll();
+                		prod = currentShoppingCart.getMyProducts();
+                        grid.setItems(prod);
+                    	
                     	//Tab entfernen
                     	
                     });
@@ -392,7 +548,14 @@ public class ShoppingCartView extends VerticalLayout {
             dailyRevenue.getStyle().set("margin-left", "auto");
             add(dailyRevenue);
 
-           // add(layoutShoppingCart11);
+           // add(layoutShoppingCart11); TEST
+            String a = "";
+            for(Product p:currentShoppingCart.getMyProducts()) {
+            	a = a + p.getProductId();
+            }
+            Span test = new Span(); 
+            test.setText(a);
+            add(test);
             
             
     }

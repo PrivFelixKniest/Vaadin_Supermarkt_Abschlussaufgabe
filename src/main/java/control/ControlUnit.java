@@ -12,6 +12,7 @@ public class ControlUnit {
     Warehouse myWarehouse;
     public ArrayList<ShoppingCart> myShoppingCarts;
     private double daylyIncome = 0.0d;
+    private static ControlUnit cu = new ControlUnit();
     public enum Property {
 		BestBy,
 		Recycling,
@@ -26,7 +27,7 @@ public class ControlUnit {
 		PasswordEmployees
 	}
 
-    public ControlUnit() {
+    ControlUnit() {
         myWarehouse = new Warehouse();
         myShoppingCarts = new ArrayList<>();
         // initial add groceries
@@ -35,8 +36,7 @@ public class ControlUnit {
         myWarehouse.addProduct(new Groceries("Butter", 0.39d, 1.49d, false, false, LocalDate.of(2023, 2, 26)));
         myWarehouse.addProduct(new Groceries("Wurst", 0.69d, 1.99d, false, true, LocalDate.of(2023, 3, 12)));
         myWarehouse.addProduct(new Groceries("Käse", 0.49d, 1.29d, false, false, LocalDate.of(2023, 2, 20)));
-        myWarehouse.addProduct(new Groceries("Flasche Wein (Weiß)", 1.99d, 6.99d, true, false, LocalDate.of(2024, 2, 12)));
-        myWarehouse.addProduct(new Groceries("Flasche Wein (Rot)", 2.29d, 7.99d, true, false, LocalDate.of(2023, 12, 7)));
+        myWarehouse.addProduct(new Groceries("Flasche Wein", 1.99d, 6.99d, true, false, LocalDate.of(2024, 2, 12)));
         // initial add household items
         myWarehouse.addProduct(new HouseholdItems("Klobürste", 0.99d, 4.99d, false, false, 0.3));
         myWarehouse.addProduct(new HouseholdItems("Plastikbesteck", 0.1d, 2.25d, false, true, 0.5));
@@ -45,7 +45,11 @@ public class ControlUnit {
         // initial add general items
         myWarehouse.addProduct(new GeneralItems("DVD Actionfilm", 5.99d, 12.99d, true, false));
         myWarehouse.addProduct(new GeneralItems("DVD Familienfilm", 3.99d, 8.99d, false, false));
-
+        
+    }
+    // Singelton design pattern test - TODO ist noch nicht in ausarbeitung 
+    public static ControlUnit getInstance() {
+    	return cu;
     }
 
     public ArrayList<Product> getProducts() {

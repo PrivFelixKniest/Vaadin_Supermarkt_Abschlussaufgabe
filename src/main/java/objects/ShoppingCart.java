@@ -15,6 +15,15 @@ public class ShoppingCart {
     private ArrayList<Product> myProducts;
     private cartType cartType;
     private String name;
+    
+    //noch nicht in der Ausarbeitung --> Für die Oberfläche eine weitere Entfernmöglichkeit
+    public void removeProductByObject(Product p) {
+    	for(Product prod: myProducts) {
+    		if(prod ==p) {
+    			myProducts.remove(p);
+    		}
+    	}
+    }
 
     public ShoppingCart(cartType cartType) {
         this.myProducts = new ArrayList<>();

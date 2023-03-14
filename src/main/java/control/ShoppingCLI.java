@@ -17,7 +17,7 @@ import objects.ShoppingCart.cartType;
 
 
 public class ShoppingCLI {
-	private ControlUnit cu = new ControlUnit();
+	private ControlUnit cu = ControlUnit.getInstance();
 	private int currentShoppingCartIndex = 0;
 	private Property highestSpecialProperty = Property.None;
 	private Property lowestSpecialProperty = Property.None;

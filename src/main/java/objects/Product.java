@@ -9,6 +9,7 @@ public abstract class Product {
     private double sellingPrice;
     private boolean ageRestriction;
     private boolean bioRestriction;
+    
 
     // Super-Constructor
     Product(String productDesignation, double purchasePrice, double sellingPrice, boolean fsk, boolean bio) {
@@ -17,7 +18,7 @@ public abstract class Product {
         this.purchasePrice = purchasePrice;
         this.sellingPrice = sellingPrice;
         this.ageRestriction = fsk;
-        this.bioRestriction = bio;
+        this.bioRestriction = bio; 
     }
 
     // Get- & Set-Methods
